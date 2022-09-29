@@ -15,21 +15,36 @@ let transporter = nodemailer.createTransport({
     }
 })
 
-let mailOptions = {
-    from: 'rahuljayaraj.25cs@licet.ac.in',
-    to: 'srahuljayaraj@gmail.com',
-    subject: 'Nodemailer Project',
-    text: 'Hi from your nodemailer project'
-};
-
-router.get('/', function(req, res, next) {
+router.post('/', function(req, res) {
     res.send('Server is working properly');
-    console.log("Server is running properly");
-    transporter.sendMail(mailOptions, function(err, data) {
+    const name = req.body.name;
+    const email = req.body.email;
+    const number = req.body.number;
+    const interest = req.body.interest;
+    const description = req.body.description;
+    const address = req.body.address;
+    
+    const mailOptions = {
+        from: 'rahuljayaraj.25cs@licet.ac.in',
+        to: 'srahuljayaraj@gmail.com',
+        subject: 'Nodemailer Project',
+        html: `
+        Name : ${name}
+        E-Mail : ${email}
+        Phone : ${number}
+        Interest : ${interest}
+        Description : ${description}
+        Address : ${address}
+      `
+    };
+
+    transporter.sendMail(mailOptions, function(err) {
         if (err) {
-          console.log("Error " + err);
+          res.json({ status: "Error"});
+          console.log("Error"+err);
         } else {
-          console.log("Email sent successfully");
+            res.json({ status: "Mail Sent"});
+            console.log("Mail sent");
         }
     });
 });
