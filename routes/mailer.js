@@ -15,38 +15,47 @@ let transporter = nodemailer.createTransport({
     }
 })
 
-router.post('/', function(req, res) {
-    res.send('Server is working properly');
-    const name = req.body.name;
-    const email = req.body.email;
-    const number = req.body.number;
-    const interest = req.body.interest;
-    const description = req.body.description;
-    const address = req.body.address;
-    
-    const mailOptions = {
-        from: 'rahuljayaraj.25cs@licet.ac.in',
-        to: 'srahuljayaraj@gmail.com',
-        subject: 'Nodemailer Project',
-        html: `
-        Name : ${name}
-        E-Mail : ${email}
-        Phone : ${number}
-        Interest : ${interest}
-        Description : ${description}
-        Address : ${address}
-      `
-    };
+router.post('/response', function(req, res) {
 
-    transporter.sendMail(mailOptions, function(err) {
-        if (err) {
-          res.json({ status: "Error"});
-          console.log("Error"+err);
-        } else {
-            res.json({ status: "Mail Sent"});
-            console.log("Mail sent");
-        }
-    });
+    const { name, email, number, interest, description, address } = req.body;
+    if(name && email && number && interest && description && address)
+    {
+        const mailOptions = {
+            from: 'rahuljayaraj.25cs@licet.ac.in',
+            to: 'srahuljayaraj@gmail.com',
+            subject: 'Response Mail',
+            html: 
+            `<div style="padding: 20px; color: #08031b">
+                <p>Name : ${name}</p><br />
+                <p>E-Mail : ${email}</p><br />
+                <p>Phone : ${number}</p><br />
+                <p>Interest : ${interest}</p><br />
+                <p>Description : ${description}</p><br />
+                <p>Address : ${address}</p><br />
+            </div>`
+        };
+
+        transporter.sendMail(mailOptions, function(err) {
+            if (err) {
+                res.json({ 
+                    success: false, 
+                    description:err.message
+                });
+            }
+            else {
+                res.json({ 
+                    success: true,
+                    description:"Mail Sent"
+                });
+            }
+        });
+    }
+    else{
+        res.json({
+            success: false,
+            description:"Provide all the details"
+        })
+    }
 });
 
 module.exports = router;
